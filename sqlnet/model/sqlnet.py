@@ -147,7 +147,7 @@ class SQLNet(nn.Module):
             sel_num_truth = Variable(sel_num_truth.cuda())
         else:
             sel_num_truth = Variable(sel_num_truth)
-        loss += self.CE(sel_num_score, sel_num_truth)
+        loss += self.CE(sel_num_score, sel_num_truth.long())
 
         # Evaluate select column
         T = len(sel_score[0])
@@ -175,7 +175,7 @@ class SQLNet(nn.Module):
             else:
                 sel_agg_truth_var = Variable(data)
             sel_agg_pred = agg_score[b, :len(truth_num[b][1])]
-            loss += (self.CE(sel_agg_pred, sel_agg_truth_var)) / len(truth_num)
+            loss += (self.CE(sel_agg_pred, sel_agg_truth_var.long())) / len(truth_num)
 
         cond_num_score, cond_col_score, cond_op_score, cond_str_score = cond_score
 
@@ -192,7 +192,7 @@ class SQLNet(nn.Module):
                 exit(0)
         else:
             cond_num_truth_var = Variable(data)
-        loss += self.CE(cond_num_score, cond_num_truth_var)
+        loss += self.CE(cond_num_score, cond_num_truth_var.long())
 
         # Evaluate the columns of conditions
         T = len(cond_col_score[0])
@@ -224,7 +224,7 @@ class SQLNet(nn.Module):
                 cond_op_truth_var = Variable(data)
             cond_op_pred = cond_op_score[b, :len(truth_num[b][5])]
             try:
-                loss += (self.CE(cond_op_pred, cond_op_truth_var) / len(truth_num))
+                loss += (self.CE(cond_op_pred, cond_op_truth_var.long()) / len(truth_num))
             except:
                 print (cond_op_pred)
                 print (cond_op_truth_var)
@@ -243,7 +243,7 @@ class SQLNet(nn.Module):
                     cond_str_truth_var = Variable(data)
                 str_end = len(cond_str_truth)-1
                 cond_str_pred = cond_str_score[b, idx, :str_end]
-                loss += (self.CE(cond_str_pred, cond_str_truth_var) \
+                loss += (self.CE(cond_str_pred, cond_str_truth_var.long()) \
                         / (len(gt_where) * len(gt_where[b])))
 
         # Evaluate condition relationship, and / or
@@ -259,7 +259,7 @@ class SQLNet(nn.Module):
                 exit(0)
         else:
             where_rela_truth = Variable(data)
-        loss += self.CE(where_rela_score, where_rela_truth)
+        loss += self.CE(where_rela_score, where_rela_truth.long())
         return loss
 
     def check_acc(self, vis_info, pred_queries, gt_queries):
